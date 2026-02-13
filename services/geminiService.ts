@@ -2,15 +2,27 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, DocumentFile, Rule } from "../types";
 
-// Get API key - Vite's define replaces process.env.GEMINI_API_KEY at build time
-// Also check import.meta.env.VITE_GEMINI_API_KEY for Vite's native env var support
+// Get API key - Check multiple sources for maximum compatibility
+// Priority: process.env (from Vite define) > import.meta.env (Vite native)
 // @ts-ignore - process.env is defined via Vite's define option
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY || '';
-if (!apiKey) {
-  console.error('GEMINI_API_KEY is not set. Please set VITE_GEMINI_API_KEY or GEMINI_API_KEY environment variable in Vercel.');
-  throw new Error('An API Key must be set when running in a browser. Please configure VITE_GEMINI_API_KEY or GEMINI_API_KEY in your Vercel environment variables.');
+const apiKey = 
+  process.env.GEMINI_API_KEY || 
+  process.env.API_KEY ||
+  import.meta.env.VITE_GEMINI_API_KEY || 
+  '';
+
+// Initialize AI client only if API key is available
+// This allows the app to load without the key, but AI features won't work
+let ai: GoogleGenAI | null = null;
+if (apiKey) {
+  try {
+    ai = new GoogleGenAI({ apiKey });
+  } catch (error) {
+    console.error('Failed to initialize Gemini AI client:', error);
+  }
+} else {
+  console.warn('GEMINI_API_KEY is not set. AI compliance analysis features will not be available. Set VITE_GEMINI_API_KEY or GEMINI_API_KEY environment variable to enable AI features.');
 }
-const ai = new GoogleGenAI({ apiKey });
 
 export const analyzeCompliance = async (
   candidate: DocumentFile,
@@ -38,6 +50,18 @@ export const analyzeCompliance = async (
     Analyze the candidate document. Determine if there is a deviation. 
     Provide a concise summary and a list of specific details where the deviation occurs.
   `;
+
+  // Check if AI client is available
+  if (!ai) {
+    return {
+      docId: candidate.id,
+      ruleId: rule.id,
+      hasDeviation: false,
+      summary: "API Key Not Configured",
+      details: ["Please set VITE_GEMINI_API_KEY or GEMINI_API_KEY environment variable to enable AI compliance analysis."],
+      severity: 'low'
+    };
+  }
 
   try {
     const response = await ai.models.generateContent({

@@ -17,6 +17,8 @@ function mapGeminiApiKey(): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
+    // Load env vars - Vite automatically exposes VITE_* prefixed vars
+    // But we also support GEMINI_API_KEY for convenience
     const env = loadEnv(mode, '.', '');
     // Support both GEMINI_API_KEY and VITE_GEMINI_API_KEY for flexibility
     const apiKey = env.GEMINI_API_KEY || env.VITE_GEMINI_API_KEY || '';
@@ -32,6 +34,8 @@ export default defineConfig(({ mode }) => {
       ],
       define: {
         // Map process.env to work in browser (for backward compatibility)
+        // Note: import.meta.env.VITE_GEMINI_API_KEY is automatically handled by Vite
+        // if the env var is named VITE_GEMINI_API_KEY in Vercel
         'process.env.API_KEY': JSON.stringify(apiKey),
         'process.env.GEMINI_API_KEY': JSON.stringify(apiKey)
       },
