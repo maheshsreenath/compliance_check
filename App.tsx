@@ -104,7 +104,7 @@ const App: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1">
         {activeTab === 'Compliance Auditor' ? (
           <ComplianceAuditor 
             rules={rules} 
