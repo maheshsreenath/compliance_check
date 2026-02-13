@@ -1,0 +1,8 @@
+{
+  "name": "MIT Keyword Search & Compliance Auditor",
+  "description": "An advanced document analysis platform featuring AI-powered keyword search and a sophisticated compliance auditor for identifying deviations against rule-based templates.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
