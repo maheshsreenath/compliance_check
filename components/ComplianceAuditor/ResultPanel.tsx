@@ -115,7 +115,7 @@ const ResultPanel: React.FC<Props> = ({ job, documents, rules, onBack }) => {
 
       {/* Detailed Analysis View - Takes full screen overlay */}
       {selectedDocId && (
-        <div className="absolute inset-0 z-[100] bg-white animate-in slide-in-from-right duration-300 overflow-hidden flex flex-col">
+        <div className="inset-0 z-[100] bg-white animate-in slide-in-from-right duration-300 overflow-hidden flex flex-col">
           <div className="px-10 py-6 border-b flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button onClick={() => setSelectedDocId(null)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors">

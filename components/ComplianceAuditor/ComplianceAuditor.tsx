@@ -126,7 +126,7 @@ const ComplianceAuditor: React.FC<Props> = ({ rules, documents, setDocuments }) 
         )}
       </div>
 
-      <div className="flex-1 overflow-hidden relative">
+      <div className="flex-1 relative">
         {view === 'workspace' && (
           <div className="h-full flex px-8 py-6 space-x-6">
             {/* Documents Column */}
