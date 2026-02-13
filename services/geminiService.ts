@@ -2,8 +2,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, DocumentFile, Rule } from "../types";
 
-// Corrected initialization to use process.env.API_KEY directly as per guidelines
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Get API key - Vite's define replaces process.env.GEMINI_API_KEY at build time
+// Also check import.meta.env.VITE_GEMINI_API_KEY for Vite's native env var support
+// @ts-ignore - process.env is defined via Vite's define option
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY || '';
+if (!apiKey) {
+  console.error('GEMINI_API_KEY is not set. Please set VITE_GEMINI_API_KEY or GEMINI_API_KEY environment variable in Vercel.');
+  throw new Error('An API Key must be set when running in a browser. Please configure VITE_GEMINI_API_KEY or GEMINI_API_KEY in your Vercel environment variables.');
+}
+const ai = new GoogleGenAI({ apiKey });
 
 export const analyzeCompliance = async (
   candidate: DocumentFile,
